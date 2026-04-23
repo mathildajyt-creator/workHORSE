@@ -39,25 +39,25 @@ tabPanel(
       The 'Produce synthpops for area selection' button in the advanced settings tab initiates the production of the synthetic populations in the background while you design the scenarios, to save time. WorkHORSE will proceed as normal even if you do not press this button, although it will take longer to produce results the first time you simulate an area.
                              ",
                              placement = "bottom")
-        ) #,
+         ) #,
 
-      # actionButton(
-      #   "locality_select_validator",
-      #   "Confirm area selection",
-      #   icon = icon("circle-check"),
-      #   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
-      #   #class = "btn-info",
-      #   width = "auto"
-      # )
-      ),
+       # actionButton(
+       #   "locality_select_validator",
+       #   "Confirm area selection",
+       #   icon = icon("circle-check"),
+       #   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
+       #   #class = "btn-info",
+       #   width = "auto"
+       # )
+       ),
     column(
       6,
       sliderInput(
         "simulation_period_slider",
         "Period to simulate",
         2013,
-        2041,
-        c(2021, 2041),
+        2061,
+        c(2021, 2061),
         1,
         sep = "",
         ticks = FALSE
@@ -65,8 +65,8 @@ tabPanel(
         shinyInput_label_embed(
            shiny_iconlink("info") %>%
             bs_embed_popover(title = "Please select the start and end year of the simulation")
-    ))
-  )),
+     ))
+   )),
 
   wellPanel(fluidRow(
     column(
@@ -120,7 +120,7 @@ tabPanel(
     %>%
       shinyInput_label_embed(
          shiny_iconlink("info") %>%
-          bs_embed_popover(title = "Please choose to use either the local or the national quantile groups of the Index of Multideprivation (QIMD). Your choice here affects every aspect of workHORSE that uses QIMD including scenario inputs and model results.")
+          bs_embed_popover(title = "Please choose to use either the local or the national quantile groups of the Index of Multideprivation (QIMD). Your choice here affects every aspect of workHORSE.")
       ))
   # ,
   # column(
