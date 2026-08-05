@@ -31,14 +31,20 @@
 ##   https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/
 ##   populationprojections/datasets/localauthoritiesinenglandz1
 ##   Release date: 24 June 2025.
-##   Download timestamp: see ONS_data/pop_size/README.md.
 ##
-## Usage:
-##   By default the script downloads the source file from ONS at runtime.
-##   To use a pre-downloaded file set the environment variable:
-##     ONS_LAPP_CSV=/path/to/downloaded.csv
-##   or pass its path as the first command-line argument:
-##     Rscript transform_pops.R /path/to/downloaded.csv
+## Usage (run from repository root):
+##   Rscript ONS_data/pop_size/transform_pops.R
+##
+##   The script reads the bundled source CSV:
+##     ONS_data/pop_size/2022 LAPP Population.csv
+##
+##   If that file is absent, run the one-time downloader first:
+##     Rscript ONS_data/pop_size/download_ons_source.R
+##   then commit the downloaded CSV before re-running this script.
+##
+##   You can also supply an explicit path:
+##     Rscript ONS_data/pop_size/transform_pops.R /path/to/file.csv
+##   or via the environment variable ONS_LAPP_CSV=/path/to/file.csv
 ##
 ## Output schema (unchanged): year, age, sex, LAD17CD, LAD17NM, pops
 ##   - sex ∈ {"men", "women"}
@@ -48,26 +54,30 @@
 library(data.table)
 library(fst)
 
-## ── 1. Locate / download the ONS 2022-based SNPP source file ──────────────────
+## ── 1. Locate the ONS 2022-based SNPP source file ─────────────────────────────
+## Priority: CLI arg > environment variable > bundled repo file
 
-## ONS 2022-based local-authority projections, 10-year migration variant (Z1)
-ONS_LAPP_URL <- paste0(
-  "https://www.ons.gov.uk/generator?format=csv&uri=/peoplepopulationandcommunity",
-  "/populationandmigration/populationprojections/datasets/",
-  "localauthoritiesinenglandz1/2022basedmigrationcategoryvariant"
-)
+DEFAULT_SRC <- "./ONS_data/pop_size/2022 LAPP Population.csv"
 
-## Determine source file path: CLI arg > env var > download
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) >= 1 && nzchar(args[1])) {
   src_file <- args[1]
 } else if (nzchar(Sys.getenv("ONS_LAPP_CSV"))) {
   src_file <- Sys.getenv("ONS_LAPP_CSV")
 } else {
-  src_file <- tempfile(fileext = ".csv")
-  message("Downloading ONS 2022-based SNPP (10-year migration variant) ...")
-  download.file(ONS_LAPP_URL, destfile = src_file, mode = "wb", quiet = FALSE)
-  message("Download complete: ", src_file)
+  src_file <- DEFAULT_SRC
+}
+
+if (!file.exists(src_file)) {
+  stop(
+    "Source file not found: ", src_file, "\n\n",
+    "The ONS 2022-based LAPP source CSV must be present in the repository.\n",
+    "Run the one-time downloader to fetch and save it:\n",
+    "  Rscript ONS_data/pop_size/download_ons_source.R\n",
+    "Then commit the file before re-running this script:\n",
+    '  git add "ONS_data/pop_size/2022 LAPP Population.csv"\n',
+    '  git commit -m "Add ONS 2022-based LAPP source CSV"\n'
+  )
 }
 
 ## ── 2. Parse the 2022-based ONS file ──────────────────────────────────────────

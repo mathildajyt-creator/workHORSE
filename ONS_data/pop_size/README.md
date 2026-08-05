@@ -59,20 +59,42 @@ covered after building `pop_proj.fst`.
 
 ## Build instructions
 
-Run from the **repository root**:
+The ONS 2022-based source CSV is bundled in the repository as:
 
-```r
-# Option 1 — download automatically (requires internet access):
-Rscript ONS_data/pop_size/transform_pops.R
-
-# Option 2 — use a pre-downloaded file:
-Rscript ONS_data/pop_size/transform_pops.R /path/to/ons_lapp_2022.csv
-
-# Option 3 — set an environment variable:
-ONS_LAPP_CSV=/path/to/ons_lapp_2022.csv Rscript ONS_data/pop_size/transform_pops.R
+```
+ONS_data/pop_size/2022 LAPP Population.csv
 ```
 
-The script writes `ONS_data/pop_size/pop_proj.fst`.
+If it is missing (e.g. after a fresh clone without Git LFS or before the file was
+committed), fetch it once with:
+
+```r
+Rscript ONS_data/pop_size/download_ons_source.R
+```
+
+Then commit the downloaded file:
+
+```bash
+git add "ONS_data/pop_size/2022 LAPP Population.csv"
+git commit -m "Add ONS 2022-based LAPP source CSV (10-year migration variant)"
+```
+
+Once the source CSV is present, regenerate `pop_proj.fst` by running from the
+**repository root**:
+
+```r
+# Default: reads the bundled ONS_data/pop_size/2022 LAPP Population.csv
+Rscript ONS_data/pop_size/transform_pops.R
+
+# Or supply an explicit path:
+Rscript ONS_data/pop_size/transform_pops.R /path/to/file.csv
+
+# Or via environment variable:
+ONS_LAPP_CSV=/path/to/file.csv Rscript ONS_data/pop_size/transform_pops.R
+```
+
+The script writes `ONS_data/pop_size/pop_proj.fst` and fails loudly with
+instructions if the source CSV is absent.
 
 ---
 
