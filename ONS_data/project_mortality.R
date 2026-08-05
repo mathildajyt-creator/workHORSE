@@ -37,7 +37,7 @@ if (!require(workHORSEmisc)) {
 options(future.fork.enable = TRUE) # enable fork in Rstudio
 plan(multicore)
 
-hor <- 35L # maximum simulation horizon
+hor <- 37L # maximum simulation horizon (covers through 2050, supporting 2047 endpoint)
 
 # load data ------------------------
 deaths <- read_fst("./ONS_data/mortality_by_agegroup.fst", as.data.table = TRUE)
